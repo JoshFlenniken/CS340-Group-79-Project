@@ -1,0 +1,86 @@
+{% extends "main.j2" %}
+{% block content %}
+
+<h1>Customers</h1>
+
+{# READ table #}
+<table>
+    <thead>
+        {# For the table header row, we print the DB attribute names #}
+        <tr>
+            {% for key in customers[0].keys() %}
+            <th>{{ key }}</th>
+            {% endfor %}
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {# For each row, print the id, fname, lname, homeworld and age #}
+        {% for customer in customers %}
+        <tr>
+            <td>{{ customer.customerID }}</td>
+            <td>{{ customer.firstName }}</td>
+            <td>{{ customer.lastName }}</td>
+            <td>{{ customer.email }}</td>
+            <td>{{ customer.phoneNumber| default('', true) }}</td>
+
+            {# DELETE form #}
+            <form id="delete_customer_form">
+                <input type="hidden" name="delete_customer_id" value="{{ customer.customerID }}">
+                <input type="hidden" name="delete_customer_name" value="{{ customer.firstName }} {{ customer.lastName }}">
+                <td>
+                    <button type="submit">
+                        Delete
+                    </button>
+                </td>
+            </form>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{# CREATE form #}
+<h2>Create a Customer</h2>
+<form class="cuForm" id="create_customer_form">
+    <label for="create_customer_firstName">First Name: </label>
+    <input type="text" name="create_customer_firstName" id="create_customer_firstName" required>
+
+    <label for="create_customer_lastName">Last Name: </label>
+    <input type="text" name="create_customer_lastName" id="create_customer_lastName">
+
+    <label for="create_customer_email">Email: </label>
+    <input type="text" name="create_customer_email" id="create_customer_email">
+
+    <label for="create_customer_phoneNumber">Age: </label>
+    <input type="number" name="create_customer_phoneNumber" id="create_customer_phoneNumber" min="0">
+
+    <input type="submit">
+</form>
+
+{# UPDATE form #}
+<h2>Update a Customer</h2>
+<form class="cuForm" id="update_customer_form">
+    <label for="update_customer_customerID">Customer to Update: </label>
+    <select name="update_customer_id" id="update_customer_id" required>
+        <option value="" disabled selected>Select a Customer</option>
+        {% for customer in customers %}
+        <option value="{{customer['customerID']}}" required>
+            {{customer['customerID']}}
+            -
+            {{customer['firstName']}}
+            {{customer['lastName']}}
+        </option>
+        {% endfor %}
+    </select>
+
+    <label for="update_customer_email">Email: </label>
+    <input type="text" name="update_customer_email" id="update_customer_email">
+
+    <label for="update_customer_phoneNumber">Phone Number: </label>
+    <input type="number" name="update_customer_phoneNumber" id="update_customer_phoneNumber" min="0">
+
+    <input type="submit">
+</form>
+
+{% endblock %}

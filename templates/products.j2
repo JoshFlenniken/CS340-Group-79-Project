@@ -1,0 +1,92 @@
+{% extends "main.j2" %}
+{% block content %}
+
+<h1>Products</h1>
+
+{# READ table #}
+<table>
+    <thead>
+        {# For the table header row, we print the DB attribute names #}
+        <tr>
+            {% for key in products[0].keys() %}
+            <th>{{ key }}</th>
+            {% endfor %}
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {# For each row, print the id, fname, lname, homeworld and age #}
+        {% for product in products %}
+        <tr>
+            <td>{{ product.productID }}</td>
+            <td>{{ product.productName }}</td>
+            <td>{{ product.productCategory }}</td>
+            <td>{{ product.productPrice }}</td>
+            <td>{{ product.productStock }}</td>
+            <td>{{ product.isActive }}</td>
+
+            {# DELETE form #}
+            <form id="delete_product_form">
+                <input type="hidden" name="delete_product_id" value="{{ product.productID }}">
+                <input type="hidden" name="delete_product_name" value="{{ product.productName }}">
+                <td>
+                    <button type="submit">
+                        Delete
+                    </button>
+                </td>
+            </form>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{# CREATE form #}
+<h2>Create a product</h2>
+<form class="cuForm" id="create_product_form">
+    <label for="create_product_productName">Product: </label>
+    <input type="text" name="create_product_productName" id="create_product_productName" required>
+
+    <label for="create_product_productCategory">Category: </label>
+    <input type="text" name="create_product_productCategory" id="create_product_productCategory">
+
+    <label for="create_product_productPrice">Price: </label>
+    <input type="number" name="create_product_productPrice" id="create_product_productPrice" min="0">
+
+    <label for="create_product_productStock">Stock: </label>
+    <input type="number" name="create_product_productStock" id="create_product_productStock" min="0">
+
+    <label for="create_product_isActive">Active: </label>
+    <input type="number" name="create_product_isActive" id="create_product_isActive" min="0" max="1">
+
+    <input type="submit">
+</form>
+
+{# UPDATE form #}
+<h2>Update a product</h2>
+<form class="cuForm" id="update_product_form">
+    <label for="update_product_productID">Product to Update: </label>
+    <select name="update_product_id" id="update_product_id" required>
+        <option value="" disabled selected>Select a product</option>
+        {% for product in products %}
+        <option value="{{product['productID']}}" required>
+            {{product['productID']}}
+            -
+            {{product['productName']}}
+        </option>
+        {% endfor %}
+    </select>
+
+    <label for="update_product_productPrice">Price: </label>
+    <input type="number" name="update_product_productPrice" id="update_product_productPrice">
+
+    <label for="update_product_productStock">Stock: </label>
+    <input type="number" name="update_product_productStock" id="update_product_productStock" min="0">
+    
+    <label for="update_product_isActive">Active: </label>
+    <input type="number" name="update_product_isActive" id="update_product_isActive" min="0" max="1">
+
+    <input type="submit">
+</form>
+
+{% endblock %}

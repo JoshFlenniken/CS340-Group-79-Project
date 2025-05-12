@@ -1,0 +1,82 @@
+{% extends "main.j2" %}
+{% block content %}
+
+<h1>Orders</h1>
+
+{# READ table #}
+<table>
+    <thead>
+        {# For the table header row, we print the DB attribute names #}
+        <tr>
+            {% for key in orders[0].keys() %}
+            <th>{{ key }}</th>
+            {% endfor %}
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {# For each row, print the id, fname, lname, homeworld and age #}
+        {% for order in orders %}
+        <tr>
+            <td>{{ order.orderID }}</td>
+            <td>{{ order.customerID }}</td>
+            <td>{{ order.employeeID }}</td>
+            <td>{{ order.orderDate }}</td>
+
+            {# DELETE form #}
+            <form id="delete_order_form">
+                <input type="hidden" name="delete_order_id" value="{{ order.orderID }}">
+                <td>
+                    <button type="submit">
+                        Delete
+                    </button>
+                </td>
+            </form>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{# CREATE form #}
+<h2>Create an order</h2>
+<form class="cuForm" id="create_order_form">
+
+    <label for="create_order_customerID">customerID: </label>
+    <input type="number" name="create_order_customerID" id="create_order_customerID">
+
+    <label for="create_order_employeeID">employeeID: </label>
+    <input type="number" name="create_order_employeeID" id="create_order_employeeID">
+
+    <label for="create_order_orderDate">Order Date: </label>
+    <input type="date" name="create_order_orderDate" id="create_order_orderDate">
+
+    <input type="submit">
+</form>
+
+{# UPDATE form #}
+<h2>Update an order</h2>
+<form class="cuForm" id="update_order_form">
+    <label for="update_order_orderID">order to Update: </label>
+    <select name="update_order_id" id="update_order_id" required>
+        <option value="" disabled selected>Select an order</option>
+        {% for order in orders %}
+        <option value="{{order['orderID']}}" required>
+            {{order['orderID']}}
+        </option>
+        {% endfor %}
+    </select>
+
+    <label for="update_order_customerID">customerID: </label>
+    <input type="number" name="update_order_customerID" id="update_order_customerID">
+
+    <label for="update_order_employee\ID">employeeID: </label>
+    <input type="number" name="update_order_employeeID" id="update_order_employeeID">
+
+    <label for="update_order_orderDate">Order Date: </label>
+    <input type="date" name="update_order_orderDate" id="update_order_orderDate">
+
+    <input type="submit">
+</form>
+
+{% endblock %}

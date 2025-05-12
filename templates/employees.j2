@@ -1,0 +1,86 @@
+{% extends "main.j2" %}
+{% block content %}
+
+<h1>Employees</h1>
+
+{# READ table #}
+<table>
+    <thead>
+        {# For the table header row, we print the DB attribute names #}
+        <tr>
+            {% for key in employees[0].keys() %}
+            <th>{{ key }}</th>
+            {% endfor %}
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {# For each row, print the id, fname, lname, homeworld and age #}
+        {% for employee in employees %}
+        <tr>
+            <td>{{ employee.employeeID }}</td>
+            <td>{{ employee.firstName }}</td>
+            <td>{{ employee.lastName }}</td>
+            <td>{{ employee.email }}</td>
+            <td>{{ employee.phoneNumber| default('', true) }}</td>
+
+            {# DELETE form #}
+            <form id="delete_employee_form">
+                <input type="hidden" name="delete_employee_id" value="{{ employee.employeeID }}">
+                <input type="hidden" name="delete_employee_name" value="{{ employee.firstName }} {{ employee.lastName }}">
+                <td>
+                    <button type="submit">
+                        Delete
+                    </button>
+                </td>
+            </form>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{# CREATE form #}
+<h2>Create an employee</h2>
+<form class="cuForm" id="create_employee_form">
+    <label for="create_employee_firstName">First Name: </label>
+    <input type="text" name="create_employee_firstName" id="create_employee_firstName" required>
+
+    <label for="create_employee_lastName">Last Name: </label>
+    <input type="text" name="create_employee_lastName" id="create_employee_lastName">
+
+    <label for="create_employee_email">Email: </label>
+    <input type="text" name="create_employee_email" id="create_employee_email">
+
+    <label for="create_employee_phoneNumber">Age: </label>
+    <input type="number" name="create_employee_phoneNumber" id="create_employee_phoneNumber" min="0">
+
+    <input type="submit">
+</form>
+
+{# UPDATE form #}
+<h2>Update an employee</h2>
+<form class="cuForm" id="update_employee_form">
+    <label for="update_employee_employeeID">employee to Update: </label>
+    <select name="update_employee_id" id="update_employee_id" required>
+        <option value="" disabled selected>Select a employee</option>
+        {% for employee in employees %}
+        <option value="{{employee['employeeID']}}" required>
+            {{employee['employeeID']}}
+            -
+            {{employee['firstName']}}
+            {{employee['lastName']}}
+        </option>
+        {% endfor %}
+    </select>
+
+    <label for="update_employee_email">Email: </label>
+    <input type="text" name="update_employee_email" id="update_employee_email">
+
+    <label for="update_employee_phoneNumber">Phone Number: </label>
+    <input type="number" name="update_employee_phoneNumber" id="update_employee_phoneNumber" min="0">
+
+    <input type="submit">
+</form>
+
+{% endblock %}
