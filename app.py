@@ -1,10 +1,13 @@
-# ########################################
-# ########## SETUP
+# Citation for the following functions:
+# Date: 5/21/2025
+# Adapted from:
+# Source URL: https://canvas.oregonstate.edu/courses/1999601/pages/exploration-implementing-cud-operations-in-your-app?module_item_id=25352968
+# Source URL: https://canvas.oregonstate.edu/courses/1999601/pages/exploration-web-application-technology-2?module_item_id=25352948
 
 from flask import Flask, render_template, request, redirect
 import database.db_connector as db
 
-PORT = 10984
+PORT = 10985
 
 app = Flask(__name__)
 
@@ -83,12 +86,20 @@ def orders():
         # In query1, we use a JOIN clause to display the names of the homeworlds,
         #       instead of just ID values
         query1 = "SELECT * FROM Orders;"
-        orders = db.query(dbConnection, query1).fetchall()
+        query2 = "SELECT Orders.orderID, Customers.firstName AS 'First', Customers.lastName AS 'Last', Orders.employeeID, Orders.orderDate \
+            FROM Customers \
+            JOIN Orders ON Orders.customerID = Customers.customerID;"
+        query3 = "SELECT Employees.employeeID, Employees.firstName, Employees.lastName \
+            FROM Employees \
+            JOIN Orders ON Orders.employeeID = Employees.employeeID;"
+        orders = db.query(dbConnection, query2).fetchall()
+        customers = db.query(dbConnection, query1).fetchall()
+        employees = db.query(dbConnection, query3).fetchall()
 
         # Render the bsg-people.j2 file, and also send the renderer
         # a couple objects that contains bsg_people and bsg_homeworld information
         return render_template(
-            "orders.j2", orders=orders
+            "orders.j2", orders=orders, customers=customers, employees=employees
         )
 
     except Exception as e:
@@ -126,7 +137,107 @@ def products():
         if "dbConnection" in locals() and dbConnection:
             dbConnection.close()
 
+@app.route("/orderdetails", methods=["GET"])
+def orderdetails():
+    try:
+        dbConnection = db.connectDB()  # Open our database connection
 
+        # Create and execute our queries
+        # In query1, we use a JOIN clause to display the names of the homeworlds,
+        #       instead of just ID values
+        query1 = "SELECT * FROM OrderDetails;"
+        query2 = "SELECT Products.productID, Products.productName \
+            FROM Products \
+            LEFT JOIN OrderDetails ON OrderDetails.productID = Products.productID;"
+        query3 = "SELECT Orders.orderID FROM Orders;"
+        orderdetails = db.query(dbConnection, query1).fetchall()
+        products = db.query(dbConnection, query2).fetchall()
+        orders = db.query(dbConnection, query3).fetchall()
+
+        # Render the bsg-people.j2 file, and also send the renderer
+        # a couple objects that contains bsg_people and bsg_homeworld information
+        return render_template(
+            "orderdetails.j2", orderdetails=orderdetails, products=products, orders=orders
+        )
+
+    except Exception as e:
+        print(f"Error executing queries: {e}")
+        return "An error occurred while executing the database queries.", 500
+
+    finally:
+        # Close the DB connection, if it exists
+        if "dbConnection" in locals() and dbConnection:
+            dbConnection.close()
+
+
+# RESET ROUTES
+@app.route("/home/reset", methods=["POST"])
+def reset_database():
+    try:
+        dbConnection = db.connectDB()  # Open our database connection
+        cursor = dbConnection.cursor()
+
+        # Create and execute our queries
+        # Using parameterized queries (Prevents SQL injection attacks)
+        query1 = "CALL sp_ResetDatabase();"
+        cursor.execute(query1, ())
+
+        # Consume the result set (if any) before running the next query
+        cursor.nextset()  # Move to the next result set (for CALL statements)
+
+        dbConnection.commit()  # commit the transaction
+
+        print(f"Resetting database data")
+
+        # Redirect the user to the updated webpage
+        return redirect("/")
+
+    except Exception as e:
+        print(f"Error executing queries: {e}")
+        return (
+            "An error occurred while executing the database queries.",
+            500,
+        )
+
+    finally:
+        # Close the DB connection, if it exists
+        if "dbConnection" in locals() and dbConnection:
+            dbConnection.close()
+
+# DELETE ROUTES
+@app.route("/customers/delete", methods=["POST"])
+def delete_customers():
+    try:
+        dbConnection = db.connectDB()  # Open our database connection
+        cursor = dbConnection.cursor()
+
+        # Get form data
+        customer_id = request.form["delete_customer_id"]
+        customer_name = request.form["delete_customer_name"]
+
+        # Create and execute our queries
+        # Using parameterized queries (Prevents SQL injection attacks)
+        query1 = "CALL sp_DeleteCustomer(%s);"
+        cursor.execute(query1, (customer_id))
+
+        dbConnection.commit()  # commit the transaction
+
+        print(f"DELETE bsg-people. ID: {customer_id} Name: {customer_name}")
+
+        # Redirect the user to the updated webpage
+        return redirect("/customers")
+
+    except Exception as e:
+        print(f"Error executing queries: {e}")
+        return (
+            "An error occurred while executing the database queries.",
+            500,
+        )
+
+    finally:
+        # Close the DB connection, if it exists
+        if "dbConnection" in locals() and dbConnection:
+            dbConnection.close()
 
 # ########################################
 # ########## LISTENER
