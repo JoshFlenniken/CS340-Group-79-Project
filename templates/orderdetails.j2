@@ -1,0 +1,104 @@
+{% extends "main.j2" %}
+{% block content %}
+
+<h1>Order Details</h1>
+
+{# READ table #}
+<table>
+    <thead>
+        {# For the table header row, we print the DB attribute names #}
+        <tr>
+            {% for key in orderdetails[0].keys() %}
+            <th>{{ key }}</th>
+            {% endfor %}
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for orderdetail in orderdetails %}
+        <tr>
+            <td>{{ orderdetail.orderDetailsID }}</td>
+            <td>{{ orderdetail.orderID }}</td>
+            <td>{{ orderdetail.productID }}</td>
+            <td>{{ orderdetail.orderQuantity }}</td>
+
+            {# DELETE form #}
+            <form id="delete_orderdetails_form">
+                <input type="hidden" name="delete_orderdetails_id" value="{{ orderdetails.orderDetailsID }}">
+                <td>
+                    <button type="submit">
+                        Delete
+                    </button>
+                </td>
+            </form>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{# CREATE form #}
+<h2>Create an order detail</h2>
+<form class="cuForm" id="create_orderDetail_form">
+
+    <label for="create_orderdetail_productname">Product name: </label>
+    <select name="create_orderdetail_productname" id="create_orderdetail_productname" required>
+        <option value="NULL" selected>Select a customer</option>
+        <option value="NULL">&lt; None &gt;</option>
+        {% for product in products %}
+        <option value="{{product['productID']}}" required>{{product['productName']}}</option>
+        {% endfor %}
+    </select>
+
+    <select name="create_orderdetail_orderID" id="create_orderdetail_orderID" required>
+        <option value="NULL" selected>Select an order number: </option>
+        <option value="NULL">&lt; None &gt;</option>
+        {% for order in orders %}
+        <option value="{{order['orderID']}}" required>{{order['orderID']}}</option>
+        {% endfor %}
+    </select>
+
+    <label for="create_order_orderDate">Order Date: </label>
+    <input type="date" name="create_order_orderDate" id="create_order_orderDate">
+
+    <input type="submit">
+</form>
+
+{# UPDATE form #}
+<h2>Update an order detail</h2>
+<form class="cuForm" id="update_orderdetails_form">
+    <label for="update_orderdetails_orderDetailsID">Order Detail to Update: </label>
+    <select name="update_orderddetail_orderDetailsID" id="update_orderdetail_orderDetailsID" required>
+        <option value="NULL"selected>Select an order detail</option>
+        <option value="NULL">&lt; None &gt;</option>
+        {% for orderdetail in orderdetails %}
+        <option value="{{orderdetail['orderDetailsID']}}" required>
+            {{orderdetail['orderDetailsID']}}
+        </option>
+        {% endfor %}
+    </select>
+
+    <label for="update_orderdetail_productname">Product name: </label>
+    <select name="update_orderdetail_productname" id="update_orderdetail_productname" required>
+        <option value="NULL" selected>Select a product</option>
+        <option value="NULL">&lt; None &gt;</option>
+        {% for product in products %}
+        <option value="{{product['productID']}}" required>{{product['productName']}}</option>
+        {% endfor %}
+    </select>
+
+    <select name="update_orderdetail_orderID" id="update_orderdetail_orderID" required>
+        <option value="NULL" selected>Select an order number: </option>
+        <option value="NULL">&lt; None &gt;</option>
+        {% for order in orders %}
+        <option value="{{order['orderID']}}" required>{{order['orderID']}}</option>
+        {% endfor %}
+    </select>
+
+    <label for="update_order_orderDate">Order Date: </label>
+    <input type="date" name="update_order_orderDate" id="update_order_orderDate">
+
+    <input type="submit">
+</form>
+
+{% endblock %}
