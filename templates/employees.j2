@@ -11,7 +11,7 @@
 {# READ table #}
 <table>
     <thead>
-        {# For the table header row, we print the DB attribute names #}
+        {# For the table header row, print the DB attribute names #}
         <tr>
             {% for key in employees[0].keys() %}
             <th>{{ key }}</th>
@@ -21,7 +21,7 @@
     </thead>
 
     <tbody>
-        {# For each row, print the id, fname, lname, homeworld and age #}
+        {# For each row, print the id, fname, lname, email and phone #}
         {% for employee in employees %}
         <tr>
             <td>{{ employee.employeeID }}</td>
