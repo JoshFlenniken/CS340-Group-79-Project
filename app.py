@@ -30,14 +30,12 @@ def customers():
     try:
         dbConnection = db.connectDB()  # Open our database connection
 
-        # Create and execute our queries
-        # In query1, we use a JOIN clause to display the names of the homeworlds,
-        #       instead of just ID values
+        # Create and execute queries
+        
         query1 = "SELECT * FROM Customers;"
         customers = db.query(dbConnection, query1).fetchall()
 
-        # Render the bsg-people.j2 file, and also send the renderer
-        # a couple objects that contains bsg_people and bsg_homeworld information
+        # Render the customers.j2 file
         return render_template(
             "customers.j2", customers=customers
         )
@@ -54,16 +52,13 @@ def customers():
 @app.route("/employees", methods=["GET"])
 def employees():
     try:
-        dbConnection = db.connectDB()  # Open our database connection
+        dbConnection = db.connectDB()  # Open database connection
 
-        # Create and execute our queries
-        # In query1, we use a JOIN clause to display the names of the homeworlds,
-        #       instead of just ID values
+        # Create and execute queries
         query1 = "SELECT * FROM Employees;"
         employees = db.query(dbConnection, query1).fetchall()
 
-        # Render the bsg-people.j2 file, and also send the renderer
-        # a couple objects that contains bsg_people and bsg_homeworld information
+        # Render the employees.j2 file
         return render_template(
             "employees.j2", employees=employees
         )
@@ -82,8 +77,8 @@ def orders():
     try:
         dbConnection = db.connectDB()  # Open our database connection
 
-        # Create and execute our queries
-        # In query1, we use a JOIN clause to display the names of the homeworlds,
+        # Create and execute queries
+        # In query2, JOIN clause displays the customer names
         #       instead of just ID values
         query1 = "SELECT * FROM Orders;"
         query2 = "SELECT Orders.orderID, Customers.firstName AS 'First', Customers.lastName AS 'Last', Orders.employeeID, Orders.orderDate \
@@ -96,8 +91,7 @@ def orders():
         customers = db.query(dbConnection, query1).fetchall()
         employees = db.query(dbConnection, query3).fetchall()
 
-        # Render the bsg-people.j2 file, and also send the renderer
-        # a couple objects that contains bsg_people and bsg_homeworld information
+        # Render the orders.j2 file
         return render_template(
             "orders.j2", orders=orders, customers=customers, employees=employees
         )
@@ -116,14 +110,10 @@ def products():
     try:
         dbConnection = db.connectDB()  # Open our database connection
 
-        # Create and execute our queries
-        # In query1, we use a JOIN clause to display the names of the homeworlds,
-        #       instead of just ID values
         query1 = "SELECT * FROM Products;"
         products = db.query(dbConnection, query1).fetchall()
 
-        # Render the bsg-people.j2 file, and also send the renderer
-        # a couple objects that contains bsg_people and bsg_homeworld information
+        # Render the products.j2 file
         return render_template(
             "products.j2", products=products
         )
@@ -142,9 +132,7 @@ def orderdetails():
     try:
         dbConnection = db.connectDB()  # Open our database connection
 
-        # Create and execute our queries
-        # In query1, we use a JOIN clause to display the names of the homeworlds,
-        #       instead of just ID values
+        # JOIN clause creates intersections between Orders and Products tables.
         query1 = "SELECT * FROM OrderDetails;"
         query2 = "SELECT Products.productID, Products.productName \
             FROM Products \
@@ -154,8 +142,7 @@ def orderdetails():
         products = db.query(dbConnection, query2).fetchall()
         orders = db.query(dbConnection, query3).fetchall()
 
-        # Render the bsg-people.j2 file, and also send the renderer
-        # a couple objects that contains bsg_people and bsg_homeworld information
+        # Render the orderdetails.j2 file
         return render_template(
             "orderdetails.j2", orderdetails=orderdetails, products=products, orders=orders
         )
