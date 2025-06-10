@@ -156,7 +156,7 @@ CREATE OR REPLACE TABLE `cs340_flennikj`.`Products` (
   UNIQUE INDEX `productID_UNIQUE` (`productID` ASC) VISIBLE);
 
 --
--- Dumping data for table `mydb`.`Products`
+-- Dumping data for table `cs340_flennikj`.`Products`
 --
 
 INSERT INTO `Products` VALUES (
@@ -262,9 +262,9 @@ BEGIN
     -- error handling
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
-        -- Roll back the transaction on any error
+        -- Roll back the transaction on error
         ROLLBACK;
-        -- Propogate the custom error message to the caller
+        -- Send error message to the caller
         RESIGNAL;
     END;
 
@@ -276,7 +276,7 @@ BEGIN
         -- ROW_COUNT() returns the number of rows affected by the preceding statement.
         IF ROW_COUNT() = 0 THEN
             set error_message = CONCAT('No matching record found in Customers for customerID: ', p_customerID);
-            -- Trigger custom error, invoke EXIT HANDLER
+            -- Trigger error, invoke EXIT HANDLER
             SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = error_message;
         END IF;
 
